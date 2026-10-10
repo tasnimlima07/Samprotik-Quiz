@@ -1,0 +1,260 @@
+<!DOCTYPE html>
+<html lang="bn">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>সাধারণ জ্ঞান কুইজ ২০২৬</title>
+    <style>
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background-color: #f4f7f6;
+            margin: 0;
+            padding: 20px;
+            display: flex;
+            justify-content: center;
+        }
+        .quiz-container {
+            background-color: #fff;
+            padding: 30px;
+            border-radius: 12px;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.1);
+            max-width: 700px;
+            width: 100%;
+        }
+        .header-bar {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            border-bottom: 2px solid #3498db;
+            padding-bottom: 10px;
+            margin-bottom: 20px;
+        }
+        h2 {
+            margin: 0;
+            color: #2c3e50;
+        }
+        .timer {
+            background-color: #e74c3c;
+            color: white;
+            padding: 5px 12px;
+            border-radius: 20px;
+            font-weight: bold;
+            font-size: 15px;
+        }
+        .question-block {
+            margin-bottom: 20px;
+            padding-bottom: 15px;
+            border-bottom: 1px solid #ecf0f1;
+        }
+        .question {
+            font-size: 16px;
+            font-weight: 600;
+            margin-bottom: 10px;
+            color: #34495e;
+        }
+        .options label {
+            display: block;
+            background-color: #ecf0f1;
+            margin-bottom: 6px;
+            padding: 10px 12px;
+            border-radius: 6px;
+            cursor: pointer;
+            transition: background-color 0.2s;
+        }
+        .options label:hover {
+            background-color: #bdc3c7;
+        }
+        .options input {
+            margin-right: 10px;
+        }
+        .btn-submit {
+            background-color: #2ecc71;
+            color: #fff;
+            border: none;
+            padding: 12px 25px;
+            font-size: 16px;
+            border-radius: 6px;
+            cursor: pointer;
+            display: block;
+            width: 100%;
+            margin-top: 20px;
+            font-weight: bold;
+        }
+        .btn-submit:hover {
+            background-color: #27ae60;
+        }
+        .score-board {
+            text-align: center;
+            font-size: 22px;
+            color: #2c3e50;
+            font-weight: bold;
+            margin-bottom: 20px;
+        }
+        .review-item {
+            margin-bottom: 15px;
+            padding: 10px;
+            border-radius: 6px;
+        }
+        .correct-ans {
+            background-color: #d4edda;
+            color: #155724;
+        }
+        .wrong-ans {
+            background-color: #f8d7da;
+            color: #721c24;
+        }
+    </style>
+</head>
+<body>
+
+<div class="quiz-container">
+    <div id="quiz-screen">
+        <div class="header-bar">
+            <h2>সাধারণ জ্ঞান কুইজ ২০২৬</h2>
+            <div class="timer" id="timer">৩০:০০</div>
+        </div>
+        
+        <form id="quiz-form">
+            <div id="questions-container"></div>
+            <button type="button" class="btn-submit" onclick="submitQuiz()">কুইজ জমা দিন (Submit)</button>
+        </form>
+    </div>
+
+    <div id="result-screen" style="display: none;">
+        <div class="score-board" id="final-score"></div>
+        <div id="review-container"></div>
+        <button class="btn-submit" onclick="location.reload()">পুনরায় চেষ্টা করুন</button>
+    </div>
+</div>
+
+<script>
+const quizData = [
+    { q: "১. আনুষ্ঠানিকভাবে 'ইনভেস্ট বাংলাদেশ' কর্তৃপক্ষ যাত্রা শুরু করে কবে?", options: ["২০ আগস্ট ২০২৬", "২১ আগস্ট ২০২৬", "২২ আগস্ট ২০২৬", "২৩ আগস্ট ২০২৬"], ans: 0 },
+    { q: "২. 'ইনভেস্ট বাংলাদেশ' কর্তৃপক্ষ গঠন করা হয় কোন সংস্থা একীভূত করে?", options: ["বিডা", "বেজা", "পিপিপিএ", "উপরের সবগুলো"], ans: 3 },
+    { q: "৩. বর্তমানে দেশে মোট নদীবন্দর রয়েছে কতটি?", options: ["৫৩টি", "৫৪টি", "৫৫টি", "৫৬টি"], ans: 3 },
+    { q: "৪. রাষ্ট্রায়ত্ত কোম্পানির আওতায় গ্যাসফিল্ড রয়েছে—", options: ["১৬টি", "১৭টি", "১৮টি", "১৯টি"], ans: 1 },
+    { q: "৫. সম্প্রতি ঢাকার রাস্তায় পিংক কালারের মহিলা বাস সার্ভিস চালু হয় কবে?", options: ["১৮ আগস্ট ২০২৬", "১৯ আগস্ট ২০২৬", "২০ আগস্ট ২০২৬", "২১ আগস্ট ২০২৬"], ans: 0 },
+    { q: "৬. ফ্যামিলি কার্ড কর্মসূচি আনুষ্ঠানিকভাবে উদ্বোধন করা হয় কবে?", options: ["১৪ আগস্ট ২০২৬", "১৫ আগস্ট ২০২৬", "১৬ আগস্ট ২০২৬", "১৭ আগস্ট ২০২৬"], ans: 2 },
+    { q: "৭. মোবাইল অপারেটর 'এয়ারটেল'-এর নতুন নাম—", options: ["বাংলাটেল", "ওয়ারিদ", "রিংটেল", "সার্কেল"], ans: 3 },
+    { q: "৮. জাহাজ ভাঙা শিল্পে বিশ্বে বাংলাদেশের অবস্থান হয়—", options: ["প্রথম", "দ্বিতীয়", "তৃতীয়", "চতুর্থ"], ans: 1 },
+    { q: "৯. বর্জ্যকে সম্পদে রূপান্তরের লক্ষ্যে দেশের প্রথম 'বায়োড্রায়িং প্লান্ট' স্থাপন করা হচ্ছে কোথায়?", options: ["খুলনায়", "ঢাকায়", "সিলেটে", "ময়মনসিংহে"], ans: 2 },
+    { q: "১০. বর্তমানে বাংলাদেশের উৎপাদিত ওষুধ বিশ্বের কতটি দেশে রপ্তানি করে?", options: ["১৩২টি", "১৩৩টি", "১৩৪টি", "১৩৫টি"], ans: 0 },
+    { q: "১১. 'অত্যাবশ্যকীয় ওষুধের তালিকা ২০২৬' অনুসারে দেশে অত্যাবশ্যকীয় ওষুধের সংখ্যা কতটি?", options: ["১১৭টি", "২০৯টি", "২৯৫টি", "৩০৩টি"], ans: 0 },
+    { q: "১২. বিশ্বের দ্বিতীয় বৃহত্তম অর্থনীতির দেশ কোনটি?", options: ["যুক্তরাষ্ট্র", "জার্মানি", "রাশিয়া", "চীন"], ans: 3 },
+    { q: "১৩. যুক্তরাষ্ট্র ইরানের ওপর কঠোর নিষেধাজ্ঞা 'Economic D-Day' চালু করে কবে?", options: ["২৪ আগস্ট ২০২৬", "২৫ আগস্ট ২০২৬", "২৬ আগস্ট ২০২৬", "৩০ আগস্ট ২০২৬"], ans: 0 },
+    { q: "১৪. মক্কা যৌথ প্রতিরক্ষা চুক্তি স্বাক্ষরিত হয় কবে?", options: ["৪ আগস্ট ২০২৬", "৫ আগস্ট ২০২৬", "৬ আগস্ট ২০২৬", "৭ আগস্ট ২০২৬"], ans: 3 },
+    { q: "১৫. চতুর্থ প্রজন্মের যুদ্ধবিমান J-10CE কোন দেশের তৈরি?", options: ["রাশিয়া", "যুক্তরাষ্ট্র", "চীন", "জার্মানি"], ans: 2 },
+    { q: "১৬. মধ্যপ্রাচ্যের প্রথম দেশ হিসেবে মৃত্যুদণ্ডের বিধান বাতিল করে কোন দেশ?", options: ["সৌদি আরব", "লেবানন", "ওমান", "কাতার"], ans: 1 },
+    { q: "১৭. সম্প্রতি কতটি স্থানকে UNESCO বিশ্ব ঐতিহ্যের তালিকায় অন্তর্ভুক্ত করে?", options: ["২৩টি", "২৪টি", "২৫টি", "২৬টি"], ans: 2 },
+    { q: "১৮. UNESCO ঘোষিত বিশ্ব ঐতিহ্যের সংখ্যা—", options: ["১২৭৩টি", "১২৯৩টি", "১৩১০টি", "১৩৭৩টি"], ans: 0 },
+    { q: "১৯. ইউরোপের নিজস্ব উপগ্রহভিত্তিক ব্রডব্যান্ড নেটওয়ার্কের নাম—", options: ["ALOS-4", "IRIS-2", "NISAR", "Starlink-2"], ans: 1 },
+    { q: "২০. দীর্ঘ ৪৭ বছর পর কোন দেশকে 'সন্ত্রাসবাদের মদদদাতা' রাষ্ট্রের তালিকা থেকে বাদ দেয় যুক্তরাষ্ট্র?", options: ["সিরিয়া", "ইরাক", "নাইজেরিয়া", "লেবানন"], ans: 0 },
+    { q: "২১. ইসরায়েলের জাতীয় নির্বাচন কবে অনুষ্ঠিত হবে?", options: ["২৭ অক্টোবর ২০২৬", "৩০ অক্টোবর ২০২৬", "০৩ নভেম্বর ২০২৬", "০৫ নভেম্বর ২০২৬"], ans: 0 },
+    { q: "২২. বিশ্বব্যাংকের 'বিকল্প নির্বাহী পরিচালক' হিসেবে নিয়োগ পেয়েছেন কে?", options: ["আব্দুর রহমান খান", "মোস্তাকুর রহমান", "আহসান হাবিব", "মো. নজিবুর রহমান"], ans: 0 },
+    { q: "২৩. সম্প্রতি এশিয়ান পুলিশ স্পোর্টস কাউন্সিলের উপদেষ্টা মনোনীত হন—", options: ["রওনক জাহান", "মো. জসীম উদ্দিন", "সুলতানা বেগম", "শামীমা পারভীন"], ans: 3 },
+    { q: "২৪. প্রধানমন্ত্রী তারেক রহমান প্রথমবারের মতো জাতিসংঘের কততম সাধারণ অধিবেশনে যোগ দেবেন?", options: ["৭৯তম", "৮০তম", "৮১তম", "৮২তম"], ans: 2 },
+    { q: "২৫. বৈশ্বিক রপ্তানিতে বর্তমানে শীর্ষ দেশ কোনটি?", options: ["যুক্তরাষ্ট্র", "চীন", "জার্মানি", "ভারত"], ans: 1 },
+    { q: "২৬. টেস্ট ক্রিকেটে অস্ট্রেলিয়ার বিপক্ষে বাংলাদেশ প্রথম জয় পায় কত সালে?", options: ["২০১৬ সালে", "২০১৭ সালে", "২০১৮ সালে", "২০২০ সালে"], ans: 1 },
+    { q: "২৭. অস্ট্রেলিয়ার মাটিতে বাংলাদেশ প্রথম টেস্ট জয় পায় কবে?", options: ["১৬ আগস্ট ২০২৬", "১৭ আগস্ট ২০২৬", "১৮ আগস্ট ২০২৬", "১৯ আগস্ট ২০২৬"], ans: 0 },
+    { q: "২৮. অস্ট্রেলিয়ার মাটিতে প্রথম বাংলাদেশি হিসেবে সেঞ্চুরি করেন কোন ব্যাটার?", options: ["নাজমুল হোসেন শান্ত", "মোমিনুল হক", "মুশফিকুর রহিম", "তানজিদ হাসান তামিম"], ans: 3 },
+    { q: "২৯. টেস্ট ক্রিকেটে বাংলাদেশের হয়ে এক ইনিংসে সর্বোচ্চ ৮ উইকেটে নিয়ে রেকর্ড করেন কে?", options: ["মুস্তাফিজুর রহমান", "হাসান মাহমুদ", "তাইজুল ইসলাম", "শরিফুল ইসলাম"], ans: 2 },
+    { q: "৩০. স্কটল্যান্ডে অনুষ্ঠিত ২৩তম কমনওয়েলথ গেমসে সর্বাধিক স্বর্ণপদক জয়ী দেশের নাম কী?", options: ["যুক্তরাষ্ট্র", "চীন", "অস্ট্রেলিয়া", "জাপান"], ans: 2 },
+    { q: "৩১. ৪-১৭ নভেম্বর ২০২৬ অনুষ্ঠিতব্য সাফ চ্যাম্পিয়নশিপের আয়োজক দেশ—", options: ["বাংলাদেশ", "ভারত", "পাকিস্তান", "নেপাল"], ans: 0 },
+    { q: "৩২. ২০২৫-২৬ ইউরোপের ফুটবল মৌসুমে সেরা গোলদাতার 'গোল্ডেন শু' জিতেছেন—", options: ["লামিনে ইয়ামাল", "কিলিয়ান এমবাপ্পে", "আর্লিং হালান্ড", "হ্যারি কেইন"], ans: 3 },
+    { q: "৩৩. ICSID'র বর্তমান সদস্য কত?", options: ["১৫৯", "১৬০", "১৬১", "১৬২"], ans: 0 },
+    { q: "৩৪. ১৬ আগস্ট ২০২৬ কোন দেশ ICSID'র ১৬২তম সদস্য পদ লাভ করে?", options: ["ভেনেজুয়েলা", "তাইওয়ান", "ইরান", "হন্ডুরাস"], ans: 3 },
+    { q: "৩৫. ১৬ সেপ্টেম্বর ২০২৬ কোন দেশকে ইউরোপীয় ইউনিয়নের (EU) পূর্ণ সহযোগী সদস্য করার প্রস্তাব দেওয়া হয়?", options: ["ভারত", "তুরস্ক", "ইউক্রেন", "কানাডা"], ans: 3 },
+    { q: "৩৬. ৩১ ডিসেম্বর ২০২৬ কোন দেশ আনুষ্ঠানিকভাবে UNESCO ত্যাগ করবে?", options: ["যুক্তরাষ্ট্র", "নিকারাগুয়া", "ইসরায়েল", "যুক্তরাষ্ট্র ও নিকারাগুয়া উভয়ই"], ans: 3 },
+    { q: "৩৭. ২৯ আগস্ট ২০২৬ গণভোটে কোন দেশ ইউরোপীয় ইউনিয়নে যোগদানের প্রস্তাব প্রত্যাখ্যান করে?", options: ["ইউক্রেন", "নরওয়ে", "সুইজারল্যান্ড", "আইসল্যান্ড"], ans: 3 },
+    { q: "৩৮. ১৮তম BRICS শীর্ষ সম্মেলন কবে অনুষ্ঠিত হয়?", options: ["২-৪ সেপ্টেম্বর ২০২৬", "৭-৮ সেপ্টেম্বর ২০২৬", "১২-১৩ সেপ্টেম্বর ২০২৬", "২০-২১ সেপ্টেম্বর ২০২৬"], ans: 2 },
+    { q: "৩৯. ১৮তম BRICS শীর্ষ সম্মেলন কোথায় অনুষ্ঠিত হয়?", options: ["নয়াদিল্লি", "মস্কো", "বেইজিং", "ব্রাসিলিয়া"], ans: 0 },
+    { q: "৪০. ২০২৭ সালে ১৯তম BRICS শীর্ষ সম্মেলন কোথায় অনুষ্ঠিত হবে?", options: ["চীন", "ইরান", "রাশিয়া", "মিসর"], ans: 0 },
+    { q: "৪১. ২১তম G20 শীর্ষ সম্মেলন কবে অনুষ্ঠিত হবে?", options: ["১৪-১৫ অক্টোবর ২০২৬", "১৪-১৫ নভেম্বর ২০২৬", "১০-১১ ডিসেম্বর ২০২৬", "১৪-১৫ ডিসেম্বর ২০২৬"], ans: 3 },
+    { q: "৪২. ২১তম G20 শীর্ষ সম্মেলন কোথায় অনুষ্ঠিত হবে?", options: ["লন্ডন, যুক্তরাজ্য", "মিযামি, যুক্তরাষ্ট্র", "সিউল, দক্ষিণ কোরিয়া", "টরন্টো, কানাডা"], ans: 1 },
+    { q: "৪৩. ২০২৬ সালের বৈশ্বিক লিঙ্গভিত্তিক বৈষম্য প্রতিবেদনে শীর্ষ দেশ কোনটি?", options: ["ফিনল্যান্ড", "আইসল্যান্ড", "নরওয়ে", "সুইডেন"], ans: 1 },
+    { q: "৪৪. ২০২৬ সালের বৈশ্বিক লিঙ্গভিত্তিক বৈষম্য প্রতিবেদনে সর্বনিম্ন দেশ কোনটি?", options: ["আলজেরিয়া", "পাকিস্তান", "ইরান", "চাদ"], ans: 3 },
+    { q: "৪৫. ২০২৬ সালের বৈশ্বিক লিঙ্গভিত্তিক বৈষম্য প্রতিবেদনে বাংলাদেশের অবস্থান কততম?", options: ["৭২তম", "৭৫তম", "৭৪তম", "৮১তম"], ans: 2 },
+    { q: "৪৬. বিশ্বের সর্বোচ্চ খেলাপি ঋণের দেশ কোনটি?", options: ["পাকিস্তান", "বাংলাদেশ", "কিউবা", "সুদান"], ans: 1 },
+    { q: "৪৭. লয়েড'স লিস্টের ২০২৬ সালের কনটেইনার হ্যান্ডলিংয়ের তালিকায় শীর্ষ বন্দর কোনটি?", options: ["জওহরলাল নেহরু বন্দর", "বুসান বন্দর", "সিঙ্গাপুর বন্দর", "সাংহাই বন্দর"], ans: 3 },
+    { q: "৪৮. লয়েড'স লিস্টের ২০২৬ সালের কনটেইনার হ্যান্ডলিংয়ের তালিকায় চট্টগ্রাম বন্দরের অবস্থান কত?", options: ["৬৭তম", "৬৮তম", "৭০তম", "৭৯তম"], ans: 1 },
+    { q: "৪৯. বাংলাদেশের প্রথম ও দ্বিতীয় LNG টার্মিনাল কোথায় স্থাপিত হয়?", options: ["পায়রা, পটুয়াখালী", "মহেশখালী, কক্সবাজার", "মোংলা, বাগেরহাট", "কর্ণফুলী, চট্টগ্রাম"], ans: 1 },
+    { q: "৫০. বর্তমানে দেশে সরকারি বিশ্ববিদ্যালয় কতটি?", options: ["৫৯টি", "৬০টি", "৬১টি", "৬৩টি"], ans: 2 }
+];
+
+let timerInterval;
+let timeLeft = 30 * 60; // 30 minutes in seconds
+
+function startTimer() {
+    timerInterval = setInterval(() => {
+        if (timeLeft <= 0) {
+            clearInterval(timerInterval);
+            alert("সময় শেষ! আপনার কুইজটি স্বয়ংক্রিয়ভাবে জমা হয়ে গেছে।");
+            submitQuiz();
+            return;
+        }
+        timeLeft--;
+        let minutes = Math.floor(timeLeft / 60);
+        let seconds = timeLeft % 60;
+        document.getElementById("timer").innerText = 
+            `${minutes < 10 ? '0' : ''}${minutes}:${seconds < 10 ? '0' : ''}${seconds}`;
+    }, 1000);
+}
+
+function loadQuestions() {
+    const container = document.getElementById("questions-container");
+    let html = "";
+    quizData.forEach((item, index) => {
+        html += `<div class="question-block">
+            <div class="question">${item.q}</div>
+            <div class="options">`;
+        item.options.forEach((opt, optIndex) => {
+            html += `<label>
+                <input type="radio" name="q${index}" value="${optIndex}"> ${opt}
+            </label>`;
+        });
+        html += `</div></div>`;
+    });
+    container.innerHTML = html;
+    startTimer();
+}
+
+function submitQuiz() {
+    clearInterval(timerInterval);
+    let score = 0;
+    let reviewHtml = "<h3>উত্তরপত্র ও মূল্যায়ন:</h3>";
+
+    quizData.forEach((item, index) => {
+        const radios = document.getElementsByName(`q${index}`);
+        let selectedIndex = -1;
+        for (let i = 0; i < radios.length; i++) {
+            if (radios[i].checked) {
+                selectedIndex = parseInt(radios[i].value);
+                break;
+            }
+        }
+
+        const isCorrect = selectedIndex === item.ans;
+        if (isCorrect) score++;
+
+        const userAnsText = selectedIndex !== -1 ? item.options[selectedIndex] : "উত্তর দেননি";
+        const correctAnsText = item.options[item.ans];
+
+        reviewHtml += `<div class="review-item ${isCorrect ? 'correct-ans' : 'wrong-ans'}">
+            <strong>${item.q}</strong><br>
+            আপনার উত্তর: ${userAnsText} <br>
+            সঠিক উত্তর: <strong>${correctAnsText}</strong>
+        </div>`;
+    });
+
+    document.getElementById("quiz-screen").style.display = "none";
+    document.getElementById("result-screen").style.display = "block";
+    document.getElementById("final-score").innerText = `আপনার মোট স্কোর: ${score} / ${quizData.length}`;
+    document.getElementById("review-container").innerHTML = reviewHtml;
+    window.scrollTo(0, 0);
+}
+
+loadQuestions();
+</script>
+
+</body>
+</html>
